@@ -1,5 +1,7 @@
 # Fraction Library for C++
 
+[![Build](https://github.com/wsbky/frac-cpp/actions/workflows/build.yml/badge.svg)](https://github.com/wsbky/frac-cpp/actions/workflows/build.yml)
+
 This library provides fraction computation features:
 
 - `src/frac.hh` : header file
