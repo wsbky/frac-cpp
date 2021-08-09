@@ -60,6 +60,17 @@ extypes::frac a(10, 15);
 cout << a.reduce();     // frac(2, 3)
 ```
 
+#### isnan()
+
+Returns whether the fraction is invalid.
+
+```c++
+extypes::frac a(1, 1);
+extypes::frac b(1, 0);
+cout << a.isnan();      // false
+cout << b.isnan();      // true
+```
+
 ### Functions
 
 #### pow(frac, int) -> frac

@@ -1,8 +1,11 @@
 #include "frac.hh"
 
 #include <iostream>
+#include <stdexcept>
 
 namespace extypes {
+
+std::string rerr_0div = "0 in denominator. NaN.";
 
 frac::frac() : nan(false) {}
 frac::frac(int a) : num(a), den(1), nan(false) {}
@@ -14,14 +17,27 @@ frac frac::reduce() const {
     int g = std::gcd(num, den);
     return frac(num / g, den / g);
 }
+bool frac::isnan() const { return nan; }
 
 frac frac::operator+() const { return *this; }
 frac frac::operator-() const { return frac(-num, den); }
 
-frac::operator int() const { return int(num / den); }
-frac::operator float() const { return float(num) / float(den); }
-frac::operator double() const { return double(num) / double(den); }
-frac::operator long() const { return long(num / den); }
+frac::operator int() const {
+    if (nan) throw std::runtime_error(rerr_0div);
+    return int(num / den);
+}
+frac::operator float() const {
+    if (nan) throw std::runtime_error(rerr_0div);
+    return float(num) / float(den);
+}
+frac::operator double() const {
+    if (nan) throw std::runtime_error(rerr_0div);
+    return double(num) / double(den);
+}
+frac::operator long() const {
+    if (nan) throw std::runtime_error(rerr_0div);
+    return long(num / den);
+}
 
 frac& frac::operator+=(const frac& a) {
     nan |= a.nan;
@@ -72,17 +88,25 @@ frac frac::operator+(long a) const {
     return t += a;
 }
 float frac::operator+(float a) const {
+    if (nan) throw std::runtime_error(rerr_0div);
     frac t = *this;
     return float(t) + a;
 }
 double frac::operator+(double a) const {
+    if (nan) throw std::runtime_error(rerr_0div);
     frac t = *this;
     return double(t) + a;
 }
 frac operator+(int a, const frac& b) { return b + a; }
 frac operator+(long a, const frac& b) { return b + a; }
-float operator+(float a, const frac& b) { return b + a; }
-double operator+(double a, const frac& b) { return b + a; }
+float operator+(float a, const frac& b) {
+    if (b.nan) throw std::runtime_error(rerr_0div);
+    return b + a;
+}
+double operator+(double a, const frac& b) {
+    if (b.nan) throw std::runtime_error(rerr_0div);
+    return b + a;
+}
 
 frac frac::operator-(const frac& a) const {
     frac t = *this;
@@ -97,17 +121,25 @@ frac frac::operator-(long a) const {
     return t -= a;
 }
 float frac::operator-(float a) const {
+    if (nan) throw std::runtime_error(rerr_0div);
     frac t = *this;
     return float(t) - a;
 }
 double frac::operator-(double a) const {
+    if (nan) throw std::runtime_error(rerr_0div);
     frac t = *this;
     return double(t) - a;
 }
 frac operator-(int a, const frac& b) { return -b + a; }
 frac operator-(long a, const frac& b) { return -b + a; }
-float operator-(float a, const frac& b) { return -b + a; }
-double operator-(double a, const frac& b) { return -b + a; }
+float operator-(float a, const frac& b) {
+    if (b.nan) throw std::runtime_error(rerr_0div);
+    return -b + a;
+}
+double operator-(double a, const frac& b) {
+    if (b.nan) throw std::runtime_error(rerr_0div);
+    return -b + a;
+}
 
 frac frac::operator*(const frac& a) const {
     frac t = *this;
@@ -122,17 +154,25 @@ frac frac::operator*(long a) const {
     return t *= a;
 }
 float frac::operator*(float a) const {
+    if (nan) throw std::runtime_error(rerr_0div);
     frac t = *this;
     return float(t) * a;
 }
 double frac::operator*(double a) const {
+    if (nan) throw std::runtime_error(rerr_0div);
     frac t = *this;
     return double(t) * a;
 }
 frac operator*(int a, const frac& b) { return b * a; }
 frac operator*(long a, const frac& b) { return b * a; }
-float operator*(float a, const frac& b) { return b * a; }
-double operator*(double a, const frac& b) { return b * a; }
+float operator*(float a, const frac& b) {
+    if (b.nan) throw std::runtime_error(rerr_0div);
+    return b * a;
+}
+double operator*(double a, const frac& b) {
+    if (b.nan) throw std::runtime_error(rerr_0div);
+    return b * a;
+}
 
 frac frac::operator/(const frac& a) const {
     frac t = *this;
@@ -147,17 +187,25 @@ frac frac::operator/(long a) const {
     return t /= a;
 }
 float frac::operator/(float a) const {
+    if (nan) throw std::runtime_error(rerr_0div);
     frac t = *this;
     return float(t) / a;
 }
 double frac::operator/(double a) const {
+    if (nan) throw std::runtime_error(rerr_0div);
     frac t = *this;
     return double(t) / a;
 }
 frac operator/(int a, const frac& b) { return frac(a) / b; }
 frac operator/(long a, const frac& b) { return frac(a) / b; }
-float operator/(float a, const frac& b) { return a / float(b); }
-double operator/(double a, const frac& b) { return a / double(b); }
+float operator/(float a, const frac& b) {
+    if (b.nan) throw std::runtime_error(rerr_0div);
+    return a / float(b);
+}
+double operator/(double a, const frac& b) {
+    if (b.nan) throw std::runtime_error(rerr_0div);
+    return a / double(b);
+}
 
 frac frac::operator%(const frac& a) const {
     return *this - floor(*this / a) * a;
@@ -197,7 +245,10 @@ bool operator!=(long a, const frac& b) { return b != a; }
 bool operator!=(float a, const frac& b) { return b != a; }
 bool operator!=(double a, const frac& b) { return b != a; }
 
-bool frac::operator>(frac a) const { return (*this - a).num > 0; }
+bool frac::operator>(frac a) const {
+    if (nan || a.isnan()) throw std::runtime_error(rerr_0div);
+    return (*this - a).num > 0;
+}
 bool frac::operator>(int a) const { return *this > frac(a); }
 bool frac::operator>(long a) const { return *this > frac(a); }
 bool frac::operator>(float a) const { return *this - a > 0; }
@@ -207,7 +258,10 @@ bool operator>(long a, const frac& b) { return b <= a; }
 bool operator>(float a, const frac& b) { return b <= a; }
 bool operator>(double a, const frac& b) { return b <= a; }
 
-bool frac::operator>=(frac a) const { return (*this - a).num >= 0; }
+bool frac::operator>=(frac a) const {
+    if (nan || a.isnan()) throw std::runtime_error(rerr_0div);
+    return (*this - a).num >= 0;
+}
 bool frac::operator>=(int a) const { return *this >= frac(a); }
 bool frac::operator>=(long a) const { return *this >= frac(a); }
 bool frac::operator>=(float a) const { return *this - a >= 0; }
@@ -217,7 +271,10 @@ bool operator>=(long a, const frac& b) { return b < a; }
 bool operator>=(float a, const frac& b) { return b < a; }
 bool operator>=(double a, const frac& b) { return b < a; }
 
-bool frac::operator<(frac a) const { return (*this - a).num < 0; }
+bool frac::operator<(frac a) const {
+    if (nan || a.isnan()) throw std::runtime_error(rerr_0div);
+    return (*this - a).num < 0;
+}
 bool frac::operator<(int a) const { return *this < frac(a); }
 bool frac::operator<(long a) const { return *this < frac(a); }
 bool frac::operator<(float a) const { return *this - a < 0; }
@@ -227,7 +284,10 @@ bool operator<(long a, const frac& b) { return b >= a; }
 bool operator<(float a, const frac& b) { return b >= a; }
 bool operator<(double a, const frac& b) { return b >= a; }
 
-bool frac::operator<=(frac a) const { return (*this - a).num <= 0; }
+bool frac::operator<=(frac a) const {
+    if (nan || a.isnan()) throw std::runtime_error(rerr_0div);
+    return (*this - a).num <= 0;
+}
 bool frac::operator<=(int a) const { return *this <= frac(a); }
 bool frac::operator<=(long a) const { return *this <= frac(a); }
 bool frac::operator<=(float a) const { return *this - a <= 0; }

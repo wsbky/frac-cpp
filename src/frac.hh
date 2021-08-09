@@ -14,6 +14,7 @@ struct frac {
 
     frac reciprocal() const;
     frac reduce() const;
+    bool isnan() const;
 
     // cast operators
     operator int() const;
@@ -179,4 +180,5 @@ struct frac {
   private:
     int num, den, nan;
 };
+
 }  // namespace extypes
